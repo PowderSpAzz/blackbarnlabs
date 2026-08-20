@@ -4,8 +4,8 @@
   "description": "Independent research and prototyping lab for hardware, firmware, and software systems.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#07050c",
-  "theme_color": "#07050c",
+  "background_color": "#050309",
+  "theme_color": "#050309",
   "icons": [
     {
       "src": "/assets/favicon.png",
