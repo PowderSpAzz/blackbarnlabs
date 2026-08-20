@@ -1,7 +1,12 @@
 name = "blackbarnlabs"
 compatibility_date = "2026-08-20"
-pages_build_output_dir = "."
+main = "src/worker.js"
 
-# Talk to Rosie — set in the dashboard or .dev.vars, not here:
-# ROSIE_API_URL
-# ROSIE_API_TOKEN
+# wrangler deploy (Cloudflare's current build) needs an assets
+# directory. This is a static site at the repo root.
+[assets]
+directory = "."
+binding = "ASSETS"
+not_found_handling = "404-page"
+html_handling = "auto-trailing-slash"
+run_worker_first = ["/api/*"]

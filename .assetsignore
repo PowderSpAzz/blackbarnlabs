@@ -1,0 +1,11 @@
+.git
+.gitignore
+.assetsignore
+.dev.vars
+.dev.vars.example
+.wrangler
+functions
+src
+README.md
+wrangler.toml
+node_modules

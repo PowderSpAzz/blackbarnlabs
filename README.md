@@ -39,14 +39,16 @@ git remote add origin https://github.com/YOUR_USERNAME/blackbarnlabs.git
 git push -u origin main
 ```
 
-Then: [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → **Create** → **Pages** → import the repo.
+Then: [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → import `PowderSpAzz/blackbarnlabs`.
+
+If Cloudflare runs Wrangler (you’ll see `wrangler 4.x` in the log), that’s fine — `wrangler.toml` now points at the static files. Do **not** set the build command to `wrangler deploy` by hand unless that’s already the default.
 
 | Setting | Value |
 | --- | --- |
 | Production branch | `main` |
 | Framework preset | None |
-| Build command | `exit 0` |
-| Build output directory | `/` |
+| Build command | *(leave empty)* or whatever Cloudflare filled in |
+| Root directory | `/` |
 
 **Wrangler**
 
