@@ -1,0 +1,7 @@
+name = "blackbarnlabs"
+compatibility_date = "2026-08-20"
+pages_build_output_dir = "."
+
+# Talk to Rosie — set in the dashboard or .dev.vars, not here:
+# ROSIE_API_URL
+# ROSIE_API_TOKEN

@@ -1,0 +1,5 @@
+# Cloudflare Pages redirects
+# www → apex is handled automatically if both custom domains are attached.
+# Keep this file for future path aliases.
+
+/index.html  /  301

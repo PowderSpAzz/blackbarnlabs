@@ -1,0 +1,21 @@
+{
+  "name": "BlackBarn Labs",
+  "short_name": "BlackBarn",
+  "description": "Independent research and prototyping lab for hardware, firmware, and software systems.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07050c",
+  "theme_color": "#07050c",
+  "icons": [
+    {
+      "src": "/assets/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/logo.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ]
+}
