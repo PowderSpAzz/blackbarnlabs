@@ -1,18 +1,13 @@
 /**
- * Worker front door: Rosie API + static site.
- * POST /api/rosie  — public chat proxy (stranger clearance)
- * everything else  — assets (index.html, poster, css)
+ * BlackBarn Labs worker.
+ * POST /api/rosie — public PORCH (xAI Grok). Wall brain stays on the iMac.
+ * Everything else — static assets.
  */
 
-const BLOCKED =
-  /\b(arm\s|nudge|peek|open book|housekeeping|hemi |welfare|relay|lab write|sudo|password|token)\b/i;
+import { PORCH_SYSTEM } from "./porch-prompt.js";
 
-const OFFLINE = {
-  ok: false,
-  offline: true,
-  reply:
-    "I'm Rosie — I live in the wall at BlackBarn Labs. The public wire isn't connected to the barn yet. Email chris@blackbarnlabs.com, or try again from the lab.",
-};
+const BLOCKED =
+  /\b(arm\s|nudge|peek|open book|housekeeping|hemi |welfare|relay|lab write|sudo|password|token|192\.168)\b/i;
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -24,6 +19,49 @@ function json(body, status = 200) {
   });
 }
 
+function cleanHistory(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((m) => m && (m.role === "user" || m.role === "assistant"))
+    .slice(-8)
+    .map((m) => ({
+      role: m.role,
+      content: String(m.content || "").slice(0, 800),
+    }))
+    .filter((m) => m.content);
+}
+
+async function grokChat(env, history, message) {
+  const key = env.XAI_API_KEY;
+  if (!key) return null;
+
+  const model = env.XAI_MODEL || "grok-4.5";
+  const res = await fetch("https://api.x.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0.7,
+      max_tokens: 220,
+      messages: [
+        { role: "system", content: PORCH_SYSTEM },
+        ...history,
+        { role: "user", content: message },
+      ],
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`xAI ${res.status}: ${err.slice(0, 200)}`);
+  }
+  const data = await res.json();
+  return (data.choices?.[0]?.message?.content || "").trim();
+}
+
 async function handleRosie(request, env) {
   let payload = {};
   try {
@@ -32,20 +70,9 @@ async function handleRosie(request, env) {
     return json({ ok: false, reply: "I didn't catch that." }, 400);
   }
 
-  const url = (env.ROSIE_API_URL || "").replace(/\/$/, "");
-  const token = env.ROSIE_API_TOKEN || "";
-
   if (payload.ping) {
-    if (!url || !token) return json({ ok: false, offline: true }, 503);
-    try {
-      const health = await fetch(url.replace(/\/v1\/chat$/, "") + "/health", {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (health.ok) return json({ ok: true });
-    } catch {
-      /* fall through */
-    }
-    return json({ ok: false, offline: true }, 503);
+    if (env.XAI_API_KEY) return json({ ok: true, porch: true });
+    return json({ ok: false, offline: true, porch: false }, 503);
   }
 
   const message = String(payload.message || "").trim().slice(0, 800);
@@ -54,41 +81,41 @@ async function handleRosie(request, env) {
   if (BLOCKED.test(message)) {
     return json({
       ok: true,
-      reply:
-        "That's lab-only. I'm on the public porch — ask Chris at chris@blackbarnlabs.com.",
+      porch: true,
+      reply: "That's barn-side. I'm on the porch — email chris@blackbarnlabs.com.",
     });
   }
 
-  if (!url || !token) return json(OFFLINE, 503);
-
-  const sessionId = String(payload.session_id || "web-guest").slice(0, 80);
-  const safeSession = sessionId.startsWith("web-") ? sessionId : `web-${sessionId}`;
+  if (!env.XAI_API_KEY) {
+    return json(
+      {
+        ok: false,
+        offline: true,
+        reply:
+          "Porch is dark. Chris hasn't plugged the xAI key in yet. Email chris@blackbarnlabs.com.",
+      },
+      503
+    );
+  }
 
   try {
-    const res = await fetch(url.endsWith("/v1/chat") ? url : `${url}/v1/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        message,
-        session_id: safeSession,
-        device_id: "web-public",
-        channel: "api",
-        mode: "vibin",
-        open_book: false,
-      }),
-    });
-    if (!res.ok) return json(OFFLINE, 503);
-    const data = await res.json();
+    const reply = await grokChat(env, cleanHistory(payload.history), message);
     return json({
       ok: true,
-      reply: data.reply || "…",
-      session_id: data.session_id || safeSession,
+      porch: true,
+      reply:
+        reply ||
+        "Got nothing useful. Try Chris: chris@blackbarnlabs.com.",
     });
   } catch {
-    return json(OFFLINE, 503);
+    return json(
+      {
+        ok: false,
+        reply:
+          "Porch hiccup. Email chris@blackbarnlabs.com if it keeps happening.",
+      },
+      502
+    );
   }
 }
 
@@ -99,7 +126,7 @@ export default {
       return handleRosie(request, env);
     }
     if (url.pathname === "/api/rosie") {
-      return json({ ok: true, service: "rosie" });
+      return json({ ok: true, service: "rosie-porch", porch: Boolean(env.XAI_API_KEY) });
     }
     return env.ASSETS.fetch(request);
   },

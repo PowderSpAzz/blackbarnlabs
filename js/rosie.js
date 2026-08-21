@@ -8,9 +8,11 @@
   const endpoint = "/api/rosie";
 
   const OFFLINE_HELLO =
-    "I'm Rosie — I live in the wall at BlackBarn Labs. The public wire isn't connected to the barn yet, so I can hear you here, but I can't think on the open internet until Chris tunnels me through.\n\nLeave him a note at chris@blackbarnlabs.com, or try again from the lab.";
+    "Porch is dark. Leave Chris a note at chris@blackbarnlabs.com.";
 
   const sessionKey = "bbl-rosie-session";
+  const history = [];
+
   const getSession = () => {
     let id = localStorage.getItem(sessionKey);
     if (!id) {
@@ -27,6 +29,8 @@
     el.textContent = text;
     log.appendChild(el);
     log.scrollTop = log.scrollHeight;
+    history.push({ role: role === "user" ? "user" : "assistant", content: text });
+    if (history.length > 16) history.splice(0, history.length - 16);
   };
 
   const setStatus = (text, offline = false) => {
@@ -42,12 +46,10 @@
     document.body.classList.toggle("rosie-open", open);
     if (open && log && !log.dataset.greeted) {
       log.dataset.greeted = "1";
-      addMsg("bot", "Rosie, BlackBarn Labs. What are you building?");
+      addMsg("bot", "Rosie. BlackBarn Labs porch. What are you building?");
       ping();
     }
-    if (open) {
-      panel.querySelector("input")?.focus();
-    }
+    if (open) panel.querySelector("input")?.focus();
   };
 
   const ping = async () => {
@@ -58,13 +60,13 @@
         body: JSON.stringify({ ping: true, session_id: getSession() }),
       });
       if (res.ok) {
-        setStatus("On the wall", false);
+        setStatus("Porch", false);
         return true;
       }
     } catch {
       /* offline */
     }
-    setStatus("Barn network only", true);
+    setStatus("Porch dark", true);
     return false;
   };
 
@@ -75,18 +77,15 @@
       body: JSON.stringify({
         message,
         session_id: getSession(),
+        history: history.slice(-8),
       }),
     });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.reply || "offline");
-    }
-    return res.json();
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.reply || "offline");
+    return data;
   };
 
-  if (location.hash === "#rosie") {
-    setOpen(true);
-  }
+  if (location.hash === "#rosie") setOpen(true);
 
   openers.forEach((btn) => {
     btn.addEventListener("click", (event) => {
@@ -96,7 +95,6 @@
   });
 
   closer?.addEventListener("click", () => setOpen(false));
-
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") setOpen(false);
   });
@@ -115,10 +113,10 @@
     try {
       const data = await send(message);
       addMsg("bot", data.reply || "…");
-      setStatus("On the wall", false);
-    } catch {
-      addMsg("bot", OFFLINE_HELLO);
-      setStatus("Barn network only", true);
+      setStatus("Porch", false);
+    } catch (err) {
+      addMsg("bot", err.message && err.message !== "offline" ? err.message : OFFLINE_HELLO);
+      setStatus("Porch dark", true);
     } finally {
       if (button) button.disabled = false;
       input?.focus();

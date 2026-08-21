@@ -330,6 +330,15 @@ section { padding: 4.25rem 0; scroll-margin-top: calc(var(--nav) + 0.75rem); }
   text-transform: uppercase;
   color: var(--dim);
 }
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.6rem 1.5rem;
+  align-items: baseline;
+}
+.site-footer a:hover { color: var(--violet-2); }
+.footer-note { letter-spacing: 0.2em; }
 
 /* Rosie */
 .rosie-launcher {

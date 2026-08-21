@@ -59,30 +59,18 @@ npx wrangler pages deploy . --project-name=blackbarnlabs
 
 **Custom domain:** Pages project → **Custom domains** → `blackbarnlabs.com` (domain must be a Cloudflare zone). Repeat for `www`.
 
-## Talk to Rosie
+## Talk to Rosie (porch)
 
-The floating **Talk to Rosie** button is live on the page. Live replies only work once the wall-lab API is reachable from Cloudflare.
+The public widget is the **porch** — Grok via xAI, not the iMac wall brain. Key never goes in the repo or the browser.
 
-Rosie’s HTTP API (`:8765`) is bound to `127.0.0.1` on the iMac. Do **not** put `rosie_api_token.txt` in this repo.
-
-On the **iMac** (Rosie-Lab):
-
-1. Keep the Rosie API running (`python3 -m brain.api_server` / your usual boot).
-2. Open a [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/) to `http://127.0.0.1:8765` (for example `https://rosie.blackbarnlabs.com`).
-3. In the Pages project → **Settings** → **Environment variables** (Production):
+1. Create a key at [console.x.ai](https://console.x.ai).
+2. Cloudflare project → **Settings** → **Variables and secrets** (Production):
 
    | Name | Value |
    | --- | --- |
-   | `ROSIE_API_URL` | `https://rosie.blackbarnlabs.com/v1/chat` |
-   | `ROSIE_API_TOKEN` | contents of `Rosie-Lab/rosie_api_token.txt` |
+   | `XAI_API_KEY` | your xAI key |
+   | `XAI_MODEL` | `grok-4.5` (optional) |
 
-4. Redeploy. The widget talks through `functions/api/rosie.js` as a stranger (`device_id: web-public`) so it cannot share the wall session.
+3. Redeploy. **Talk to Rosie** should show status **Porch**.
 
-Until that tunnel exists, Rosie greets people and points them at `chris@blackbarnlabs.com`.
-
-Local Function preview:
-
-```bash
-cp .dev.vars.example .dev.vars   # fill in token
-npx wrangler pages dev .
-```
+The wall Rosie on the iMac stays local. Do not put `rosie_api_token.txt` here.
