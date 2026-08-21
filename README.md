@@ -74,3 +74,9 @@ The public widget is the **porch** — Grok via xAI, not the iMac wall brain. Ke
 3. Redeploy. **Talk to Rosie** should show status **Porch**.
 
 The wall Rosie on the iMac stays local. Do not put `rosie_api_token.txt` here.
+
+### Bench slips (messages for Chris)
+
+Porch Rosie can leave a note (“tell Chris hi”, technical pointers). Those do **not** write into the wall brain.
+
+Until KV is bound, slips show in **Workers → Logs** as `[BENCH]`. Optional later: Cloudflare KV binding `BENCH` + secret `BENCH_READ_TOKEN`, then `GET /api/bench?token=...`.
