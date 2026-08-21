@@ -119,15 +119,47 @@ async function handleRosie(request, env) {
   }
 }
 
+function scheme(request) {
+  const visitor = request.headers.get("cf-visitor");
+  if (visitor) {
+    try {
+      return JSON.parse(visitor).scheme || "https";
+    } catch {
+      /* fall through */
+    }
+  }
+  return new URL(request.url).protocol.replace(":", "") || "https";
+}
+
+function withSecurity(response) {
+  const headers = new Headers(response.headers);
+  headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("X-Frame-Options", "DENY");
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (scheme(request) === "http") {
+      url.protocol = "https:";
+      return Response.redirect(url.toString(), 301);
+    }
+
+    let response;
     if (url.pathname === "/api/rosie" && request.method === "POST") {
-      return handleRosie(request, env);
+      response = await handleRosie(request, env);
+    } else if (url.pathname === "/api/rosie") {
+      response = json({ ok: true, service: "rosie-porch", porch: Boolean(env.XAI_API_KEY) });
+    } else {
+      response = await env.ASSETS.fetch(request);
     }
-    if (url.pathname === "/api/rosie") {
-      return json({ ok: true, service: "rosie-porch", porch: Boolean(env.XAI_API_KEY) });
-    }
-    return env.ASSETS.fetch(request);
+    return withSecurity(response);
   },
 };
