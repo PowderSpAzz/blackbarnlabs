@@ -10,3 +10,11 @@
 /rosettelab/support   /support/rosette-lab/   301
 /rosettelab/          /support/rosette-lab/   301
 /rosettelab           /support/rosette-lab/   301
+
+# Arrr You Hungry legal pages.
+# The app's About screen already links to the real paths, so these are
+# belt-and-braces aliases in the same shape as the Rosette Lab ones.
+/arryouhungry/privacy   /privacy/arryouhungry/   301
+/arryouhungry/support   /support/arryouhungry/   301
+/arryouhungry/          /support/arryouhungry/   302
+/arryouhungry           /support/arryouhungry/   302
