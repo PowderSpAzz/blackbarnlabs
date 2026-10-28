@@ -1,5 +1,12 @@
-# Cloudflare Pages redirects
+# Cloudflare redirects
 # www → apex is handled automatically if both custom domains are attached.
-# Keep this file for future path aliases.
 
 /index.html  /  301
+
+# Rosette Lab legal pages.
+# The app's About sheet links to /rosettelab/privacy and /rosettelab/support,
+# so both shapes resolve to the pages the site actually serves.
+/rosettelab/privacy   /privacy/rosette-lab/   301
+/rosettelab/support   /support/rosette-lab/   301
+/rosettelab/          /support/rosette-lab/   301
+/rosettelab           /support/rosette-lab/   301
