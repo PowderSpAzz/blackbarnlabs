@@ -1,5 +1,7 @@
 # Cloudflare redirects
-# www → apex is handled automatically if both custom domains are attached.
+# www.blackbarnlabs.com → apex is NOT handled here. It is a Cloudflare
+# Redirect Rule in the Cloudflare dashboard (Rules → Redirect Rules); this file only sees
+# requests that already reached the apex Worker.
 
 /index.html  /  301
 

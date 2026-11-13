@@ -5,6 +5,7 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   X-XSS-Protection: 1; mode=block
   Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com 'sha256-Vpz3AFlY2J2vN68iN2DbntZ3693jnuXuc653rhLWKIE=' 'unsafe-hashes' 'sha256-t5UWmRsNEK0IwSufuCsc1cvc8VwNJavI3GqdfxdeAoI='; font-src 'self' https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://cloudflareinsights.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
 /
   Cache-Control: public, max-age=0, must-revalidate

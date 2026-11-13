@@ -1,63 +1,48 @@
 # BlackBarn Labs
 
-One-page site for [blackbarnlabs.com](https://blackbarnlabs.com). Static HTML, CSS, and a little JavaScript — plus an optional Cloudflare Function that talks to Rosie.
+Site for [blackbarnlabs.com](https://blackbarnlabs.com). Static HTML, CSS, and a little JavaScript, served by a Cloudflare Worker that also runs the Rosie chat at `/api/rosie`.
 
 ```
 .
-├── index.html
+├── index.html                 Homepage
 ├── 404.html
+├── privacy/index.html         Site privacy notice
+├── privacy/<app>/index.html   App privacy policies (Rosette Lab, Arrr You Hungry)
+├── support/<app>/index.html   App support pages
 ├── css/styles.css
 ├── js/main.js
-├── js/rosie.js
-├── assets/barn.jpg          Hero graphic
-├── assets/logo.png          Nav / widget mark
-├── assets/logo-poster.jpg   Full poster (wordmark)
-├── assets/og.jpg
-├── functions/api/rosie.js   Talk to Rosie proxy
-├── _headers
-└── wrangler.toml
+├── js/rosie.js                Rosie chat widget
+├── assets/                    logo.png (nav/widget mark), poster.jpg, og.jpg, favicons
+├── src/worker.js              Worker: /api/rosie + static assets
+├── src/porch-prompt.js        Rosie's porch system prompt
+├── _headers                   Security headers, incl. Content-Security-Policy
+├── _redirects
+└── wrangler.toml              Worker + assets config (this is what deploys)
 ```
 
 ## Preview locally
 
 ```bash
-python3 -m http.server 8080
+npx wrangler dev
 ```
 
-Open [http://localhost:8080](http://localhost:8080). The Rosie widget UI works; live replies need the Function (below).
+Open [http://localhost:8787](http://localhost:8787). This runs `src/worker.js` with the static files, `_headers` and `_redirects`, the same way production does. Rosie replies need `XAI_API_KEY` in `.dev.vars` (see `.dev.vars.example`); without it the widget shows "Porch dark".
 
-## Deploy to Cloudflare Pages
+## How it deploys (read this before touching anything)
 
-**GitHub (recommended)**
+The site is **one Cloudflare Worker with static assets**, not a Cloudflare Pages project.
 
-```bash
-git init
-git add .
-git commit -m "BlackBarn Labs site"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/blackbarnlabs.git
-git push -u origin main
-```
+- `wrangler.toml` sets `main = "src/worker.js"` (serves `/api/rosie` and adds security headers) and `[assets] directory = "."` (the HTML, CSS, JS and images in this repo).
+- **It deploys automatically from `main`.** Cloudflare's Git integration builds every push to `main` and runs `wrangler deploy` with this `wrangler.toml`. To change the live site, merge to `main` and you're done.
+- `functions/api/rosie.js` is a leftover from the old Pages setup. The Worker doesn't use it. The live Rosie code is in `src/worker.js`.
 
-Then: [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → import `PowderSpAzz/blackbarnlabs`.
+> **Warning: never run `wrangler pages deploy`.** It targets Cloudflare Pages, not this Worker, so it can't update the site. It would also create or overwrite a separate Pages project without the `/api/rosie` Worker.
+>
+> **Warning: don't deploy anything else under the Worker name `blackbarnlabs`.** That includes a hand-run `wrangler deploy` from another folder or branch, another project's `wrangler.toml` with `name = "blackbarnlabs"`, or a dashboard "Quick edit". Any of these replaces the Worker that serves the whole site and Rosie (`/api/rosie`). If you need a test copy, deploy it under a different name.
 
-If Cloudflare runs Wrangler (you’ll see `wrangler 4.x` in the log), that’s fine — `wrangler.toml` now points at the static files. Do **not** set the build command to `wrangler deploy` by hand unless that’s already the default.
+**Custom domain:** `blackbarnlabs.com` is attached to the Worker. `www.blackbarnlabs.com` is redirected to the apex by a Redirect Rule in the Cloudflare dashboard (Rules → Redirect Rules), not by this repo.
 
-| Setting | Value |
-| --- | --- |
-| Production branch | `main` |
-| Framework preset | None |
-| Build command | *(leave empty)* or whatever Cloudflare filled in |
-| Root directory | `/` |
-
-**Wrangler**
-
-```bash
-npx wrangler login
-npx wrangler pages deploy . --project-name=blackbarnlabs
-```
-
-**Custom domain:** Pages project → **Custom domains** → `blackbarnlabs.com` (domain must be a Cloudflare zone). Repeat for `www`.
+**Content-Security-Policy:** `_headers` allows the inline `<style>` blocks on the legal pages and the one `style=""` on `404.html` by their SHA-256 hash. If you edit either, recompute the hash and update `_headers`, or those styles will be blocked.
 
 ## Talk to Rosie (porch)
 
@@ -79,4 +64,4 @@ The wall Rosie on the iMac stays local. Do not put `rosie_api_token.txt` here.
 
 Porch Rosie can leave a note (“tell Chris hi”, technical pointers). Those do **not** write into the wall brain.
 
-Until KV is bound, slips show in **Workers → Logs** as `[BENCH]`. Optional later: Cloudflare KV binding `BENCH` + secret `BENCH_READ_TOKEN`, then `GET /api/bench?token=...`.
+Until KV is bound, slips show in **Workers → Logs** as `[BENCH]`. Optional later: Cloudflare KV binding `BENCH` + secret `BENCH_READ_TOKEN`, then `GET /api/bench?token=...`. Before binding `BENCH`, update `/privacy/` (notes would then be kept up to 90 days).
