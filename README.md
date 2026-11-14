@@ -9,11 +9,18 @@ Site for [blackbarnlabs.com](https://blackbarnlabs.com). Static HTML, CSS, and a
 ├── privacy/index.html         Site privacy notice
 ├── privacy/<app>/index.html   App privacy policies (Rosette Lab, Arrr You Hungry)
 ├── support/<app>/index.html   App support pages
+├── products/<product>/        Product pages (in development) with notify-me forms
+├── apps/index.html            Apps page
+├── log/index.html, feed.xml   Build log + RSS (drafts stay out of the feed and sitemap)
+├── notify/{thanks,sorry}/     No-JS result pages for the notify-me form (noindex)
 ├── css/styles.css
 ├── js/main.js
 ├── js/rosie.js                Rosie chat widget
+├── js/notify.js               Notify-me form (progressive enhancement)
 ├── assets/                    logo.png (nav/widget mark), poster.jpg, og.jpg, favicons
-├── src/worker.js              Worker: /api/rosie + static assets
+├── src/worker.js              Worker: /api/rosie, /api/notify + static assets
+├── src/notify.js              /api/notify handler (D1 binding NOTIFY_DB)
+├── migrations/                D1 schema for notify-me signups (not served)
 ├── src/porch-prompt.js        Rosie's porch system prompt
 ├── _headers                   Security headers, incl. Content-Security-Policy
 ├── _redirects
@@ -65,3 +72,9 @@ The wall Rosie on the iMac stays local. Do not put `rosie_api_token.txt` here.
 Porch Rosie can leave a note (“tell Chris hi”, technical pointers). Those do **not** write into the wall brain.
 
 Until KV is bound, slips show in **Workers → Logs** as `[BENCH]`. Optional later: Cloudflare KV binding `BENCH` + secret `BENCH_READ_TOKEN`, then `GET /api/bench?token=...`. Before binding `BENCH`, update `/privacy/` (notes would then be kept up to 90 days).
+
+## Notify-me signups (`/api/notify`)
+
+The product pages post to `POST /api/notify`, which stores `{email, product, ts}` in a Cloudflare D1 database bound as `NOTIFY_DB` (schema in `migrations/`). Until that binding exists, the endpoint answers `503` and the form says signups aren't switched on yet. Nothing sends email.
+
+Binding `NOTIFY_DB` and publishing the matching `/privacy/` section must happen together. Don't bind it without the privacy update.

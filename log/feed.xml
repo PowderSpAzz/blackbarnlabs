@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>BlackBarn Labs build log</title>
+    <link>https://blackbarnlabs.com/log/</link>
+    <atom:link href="https://blackbarnlabs.com/log/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Notes from the barn: what we built, what we tested, and what broke. BlackBarn Labs, Indiana.</description>
+    <language>en-us</language>
+    <!-- Add one <item> per PUBLISHED post, newest first. Drafts never go here.
+    <item>
+      <title>Saltwater battery cell tests</title>
+      <link>https://blackbarnlabs.com/log/2026-11-saltwater-cells/</link>
+      <guid isPermaLink="true">https://blackbarnlabs.com/log/2026-11-saltwater-cells/</guid>
+      <pubDate>Fri, 20 Nov 2026 12:00:00 -0600</pubDate>
+      <description>One-line summary.</description>
+    </item>
+    -->
+  </channel>
+</rss>

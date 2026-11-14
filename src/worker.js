@@ -1,10 +1,12 @@
 /**
  * BlackBarn Labs worker.
  * POST /api/rosie — public PORCH (xAI Grok). Wall brain stays on the iMac.
+ * POST /api/notify — notify-me signups (D1 binding NOTIFY_DB; 503 until bound).
  * Everything else — static assets.
  */
 
 import { PORCH_SYSTEM } from "./porch-prompt.js";
+import { handleNotify } from "./notify.js";
 
 const BLOCKED =
   /\b(arm\s|nudge|peek|open book|housekeeping|hemi |welfare|relay|lab write|sudo|password|token|192\.168)\b/i;
@@ -231,6 +233,8 @@ export default {
       }
     } else if (url.pathname === "/api/rosie" && request.method === "POST") {
       response = await handleRosie(request, env);
+    } else if (url.pathname === "/api/notify") {
+      response = await handleNotify(request, env, json);
     } else if (url.pathname === "/api/rosie") {
       response = json({ ok: true, service: "rosie-porch", porch: Boolean(env.XAI_API_KEY) });
     } else {

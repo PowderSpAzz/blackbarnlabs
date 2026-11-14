@@ -25,3 +25,11 @@ invocation_logs = true
 enabled = false
 persist = true
 head_sampling_rate = 1
+
+# Notify-me signups (POST /api/notify). Schema: migrations/.
+# Must live here: git-driven deploys drop dashboard-only bindings.
+[[d1_databases]]
+binding = "NOTIFY_DB"
+database_name = "blackbarnlabs-notify"
+database_id = "db61698f-cff5-4e01-ae1c-0fa40bca51f1"
+migrations_dir = "migrations"

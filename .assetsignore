@@ -9,3 +9,4 @@ src
 README.md
 wrangler.toml
 node_modules
+migrations

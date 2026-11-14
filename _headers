@@ -18,3 +18,13 @@
 
 /assets/*
   Cache-Control: public, max-age=604800
+
+/log/feed.xml
+  Content-Type: application/rss+xml; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/log/draft-*
+  X-Robots-Tag: noindex
+
+/notify/*
+  X-Robots-Tag: noindex

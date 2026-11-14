@@ -64,10 +64,12 @@
         <span aria-hidden="true"></span>
       </button>
       <ul class="nav-links" id="nav-links" data-nav>
-        <li><a href="/index.html#about">About</a></li>
-        <li><a href="/index.html#systems">Systems</a></li>
-        <li><a href="/index.html#contact">Contact</a></li>
-        <li><a href="/index.html#rosie" class="nav-cta">Talk to Rosie</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#products">Products</a></li>
+        <li><a href="/apps/">Apps</a></li>
+        <li><a href="/log/">Log</a></li>
+        <li><a href="/#contact">Contact</a></li>
+        <li><a href="/#rosie" class="nav-cta">Talk to Rosie</a></li>
       </ul>
     </nav>
   </header>
@@ -88,7 +90,7 @@
           <li>Our fonts load from <strong>Google Fonts</strong>, so Google sees your IP address when a page loads.</li>
           <li>If you chat with <strong>Rosie</strong>, your messages go to <strong>xAI</strong> to write the replies.</li>
           <li>The site runs on <strong>Cloudflare</strong>, which keeps short&#8209;lived request logs.</li>
-          <li>There is <strong>no signup form</strong> on this site yet. Email is the only way to send us details.</li>
+          <li>If you use a <strong>Notify me</strong> form, we keep your email, the product you picked and the date, and nothing else. Email us to be removed.</li>
         </ul>
       </div>
 
@@ -114,8 +116,16 @@
       <h3 id="email">05 &middot; Email</h3>
       <p>Emails to <a href="mailto:chris@blackbarnlabs.com">chris@blackbarnlabs.com</a> are delivered to a mailbox hosted by <strong>Zoho Mail</strong>. We keep your email, address and anything you send so we can reply. If you want your messages deleted, ask us and we will delete them. We don't add you to any mailing list.</p>
 
-      <h3 id="forms">06 &middot; Signups and forms</h3>
-      <p>There is no signup, newsletter or "notify me" form on this site today. If we add one, we'll update this page first, saying what it collects, who stores it and how to unsubscribe.</p>
+      <h3 id="notify">06 &middot; Notify-me signups</h3>
+      <p>The pages for products we're still building (the Sentry Turret, Greenhouse Buddy and the CO2 Cat Deterrent) have a "Notify me" form. It's the only form on this site.</p>
+      <ul>
+        <li><strong>What we store.</strong> Your email address, which product you picked, and the date and time you signed up. Nothing else: not your name, IP address, browser or location. Signing up for the same product twice keeps one entry.</li>
+        <li><strong>Why.</strong> Only to email you news about the product you picked, such as when it's ready. It isn't a newsletter, and we never sell, rent or share the list.</li>
+        <li><strong>Where.</strong> In a Cloudflare D1 database in our own Cloudflare account. Cloudflare stores it for us as our host, under its <a href="https://www.cloudflare.com/privacypolicy/">privacy policy</a>.</li>
+        <li><strong>How long.</strong> Until you ask us to remove it, or 12 months after that product launches or is dropped, whichever comes first. Then we delete it.</li>
+        <li><strong>How to unsubscribe.</strong> Email <a href="mailto:chris@blackbarnlabs.com?subject=Unsubscribe">chris@blackbarnlabs.com</a> from the address you signed up with and say "unsubscribe". We'll delete your entry, normally within 7 days, and reply to confirm. Any email we send about a product will say how to unsubscribe.</li>
+        <li><strong>Spam protection.</strong> The form has a hidden field that only bots fill in, and it limits how many tries one connection can make in a few minutes. That check looks at your IP address in memory while your request is handled. It isn't saved.</li>
+      </ul>
 
       <h3 id="not">07 &middot; What we don't do</h3>
       <ul>
